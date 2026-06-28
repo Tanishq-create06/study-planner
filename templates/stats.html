@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Study Planner - Stats</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>On-Time Completion Trend</h1>
+    <a href="/">← Back to assignments</a>
+
+    <canvas id="statsChart" width="600" height="300"></canvas>
+
+    <script>
+        const labels = {{ labels | tojson }};
+        const percentages = {{ percentages | tojson }};
+
+        new Chart(document.getElementById('statsChart'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '% On-Time Completion',
+                    data: percentages,
+                    borderColor: 'green',
+                    backgroundColor: 'rgba(0, 200, 0, 0.1)',
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
