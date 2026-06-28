@@ -3,7 +3,6 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# Temporary in-memory storage (resets when server restarts)
 assignments = []
 
 @app.route('/')
@@ -32,11 +31,21 @@ def add_assignment():
     deadline = request.form['deadline']
 
     assignments.append({
+        'id': len(assignments),
         'title': title,
         'subject': subject,
         'deadline': deadline,
-        'done': False
+        'done': False,
+        'completed_date': None
     })
+    return redirect(url_for('home'))
+
+@app.route('/complete/<int:assignment_id>')
+def complete_assignment(assignment_id):
+    for a in assignments:
+        if a['id'] == assignment_id:
+            a['done'] = True
+            a['completed_date'] = datetime.now().date().isoformat()
     return redirect(url_for('home'))
 
 if __name__ == '__main__':
