@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -7,6 +8,10 @@ assignments = []
 
 @app.route('/')
 def home():
+    today = datetime.now().date()
+    for a in assignments:
+        deadline_date = datetime.strptime(a['deadline'], '%Y-%m-%d').date()
+        a['overdue'] = deadline_date < today and not a['done']
     return render_template('index.html', assignments=assignments)
 
 @app.route('/add', methods=['POST'])

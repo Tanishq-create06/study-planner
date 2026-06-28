@@ -2,6 +2,9 @@
 <html>
 <head>
     <title>Study Planner</title>
+    <style>
+        .overdue { color: red; font-weight: bold; }
+    </style>
 </head>
 <body>
     <h1>Study Planner</h1>
@@ -17,7 +20,10 @@
     <h2>Your Assignments</h2>
     <ul>
         {% for a in assignments %}
-            <li>{{ a.title }} — {{ a.subject }} — Due: {{ a.deadline }}</li>
+            <li class="{{ 'overdue' if a.overdue else '' }}">
+                {{ a.title }} — {{ a.subject }} — Due: {{ a.deadline }}
+                {% if a.overdue %} (OVERDUE!) {% endif %}
+            </li>
         {% endfor %}
     </ul>
 </body>
