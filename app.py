@@ -23,7 +23,27 @@ def home():
         else:
             a['status_color'] = 'green'
 
-    return render_template('index.html', assignments=assignments)
+    # Calculate weekly on-time percentage
+    weekly_data = defaultdict(lambda: {'on_time': 0, 'late': 0})
+    for a in assignments:
+        if a['done'] and a['completed_date']:
+            completed = datetime.strptime(a['completed_date'], '%Y-%m-%d').date()
+            deadline = datetime.strptime(a['deadline'], '%Y-%m-%d').date()
+            week_label = completed.strftime('%Y-W%U')
+
+            if completed <= deadline:
+                weekly_data[week_label]['on_time'] += 1
+            else:
+                weekly_data[week_label]['late'] += 1
+
+    labels = sorted(weekly_data.keys())
+    percentages = []
+    for week in labels:
+        total = weekly_data[week]['on_time'] + weekly_data[week]['late']
+        pct = (weekly_data[week]['on_time'] / total * 100) if total > 0 else 0
+        percentages.append(round(pct, 1))
+
+    return render_template('index.html', assignments=assignments, labels=labels, percentages=percentages)
 
 @app.route('/add', methods=['POST'])
 def add_assignment():
@@ -48,30 +68,6 @@ def complete_assignment(assignment_id):
             a['done'] = True
             a['completed_date'] = datetime.now().date().isoformat()
     return redirect(url_for('home'))
-
-@app.route('/stats')
-def stats():
-    weekly_data = defaultdict(lambda: {'on_time': 0, 'late': 0})
-
-    for a in assignments:
-        if a['done'] and a['completed_date']:
-            completed = datetime.strptime(a['completed_date'], '%Y-%m-%d').date()
-            deadline = datetime.strptime(a['deadline'], '%Y-%m-%d').date()
-            week_label = completed.strftime('%Y-W%U')
-
-            if completed <= deadline:
-                weekly_data[week_label]['on_time'] += 1
-            else:
-                weekly_data[week_label]['late'] += 1
-
-    labels = sorted(weekly_data.keys())
-    percentages = []
-    for week in labels:
-        total = weekly_data[week]['on_time'] + weekly_data[week]['late']
-        pct = (weekly_data[week]['on_time'] / total * 100) if total > 0 else 0
-        percentages.append(round(pct, 1))
-
-    return render_template('stats.html', labels=labels, percentages=percentages)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
