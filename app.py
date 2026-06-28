@@ -11,7 +11,18 @@ def home():
     today = datetime.now().date()
     for a in assignments:
         deadline_date = datetime.strptime(a['deadline'], '%Y-%m-%d').date()
-        a['overdue'] = deadline_date < today and not a['done']
+        days_left = (deadline_date - today).days
+        a['days_left'] = days_left
+
+        if a['done']:
+            a['status_color'] = 'done'
+        elif days_left <= 5:
+            a['status_color'] = 'red'
+        elif days_left <= 10:
+            a['status_color'] = 'yellow'
+        else:
+            a['status_color'] = 'green'
+
     return render_template('index.html', assignments=assignments)
 
 @app.route('/add', methods=['POST'])

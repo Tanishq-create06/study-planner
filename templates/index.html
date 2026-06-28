@@ -3,7 +3,20 @@
 <head>
     <title>Study Planner</title>
     <style>
-        .overdue { color: red; font-weight: bold; }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        .red { background-color: #ffcccc; }
+        .yellow { background-color: #fff3cd; }
+        .green { background-color: #d4edda; }
+        .done { background-color: #e0e0e0; text-decoration: line-through; }
     </style>
 </head>
 <body>
@@ -18,13 +31,29 @@
     </form>
 
     <h2>Your Assignments</h2>
-    <ul>
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Subject</th>
+            <th>Deadline</th>
+            <th>Days Left</th>
+        </tr>
         {% for a in assignments %}
-            <li class="{{ 'overdue' if a.overdue else '' }}">
-                {{ a.title }} — {{ a.subject }} — Due: {{ a.deadline }}
-                {% if a.overdue %} (OVERDUE!) {% endif %}
-            </li>
+        <tr class="{{ a.status_color }}">
+            <td>{{ a.title }}</td>
+            <td>{{ a.subject }}</td>
+            <td>{{ a.deadline }}</td>
+            <td>
+                {% if a.done %}
+                    Done
+                {% elif a.days_left < 0 %}
+                    Overdue
+                {% else %}
+                    {{ a.days_left }} days
+                {% endif %}
+            </td>
+        </tr>
         {% endfor %}
-    </ul>
+    </table>
 </body>
 </html>
