@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Study Planner</title>
+</head>
+<body>
+    <h1>Study Planner</h1>
+
+    <h2>Add Assignment</h2>
+    <form action="/add" method="POST">
+        <input type="text" name="title" placeholder="Assignment title" required>
+        <input type="text" name="subject" placeholder="Subject" required>
+        <input type="date" name="deadline" required>
+        <button type="submit">Add</button>
+    </form>
+
+    <h2>Your Assignments</h2>
+    <ul>
+        {% for a in assignments %}
+            <li>{{ a.title }} — {{ a.subject }} — Due: {{ a.deadline }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
